@@ -1,80 +1,85 @@
 /*
-DDL SCript to add Bronze Layer tables
+===============================================================================
+DDL Script: Create Bronze_layer Tables
+===============================================================================
 */
-Create or Alter Procedure Bronze_layer.Load_bronze as
-begin
-Declare @start_time as datetime,@end_time as datetime;
-	set @start_time=getdate();
-	begin TRY
-		Print '=============================================';
-		Print 'Loading Bornze Layer';
-		Print '=============================================';
-		Print '---------------------------------------------';
-		Print 'Loading CRM Tables'
-		Print '---------------------------------------------';
-		truncate table Bronze_layer.crm_cust_info;
-		Bulk Insert Bronze_layer.crm_cust_info
-		from 'C:\Users\Parmeshwar Kusumade\OneDrive\Pictures\sql-data-warehouse-project\datasets\source_crm\cust_info.csv'
-		With (
-		Firstrow = 2,
-		fieldterminator = ',',
-		Tablock
-		);
-		set @end_time=getdate()
-		Print'>> Load Duration:' + CAst(datediff(second,@start_time,@end_time)as Nvarchar)+ 'seconds';
-		truncate table Bronze_layer.crm_prd_info;
-		Bulk Insert Bronze_layer.crm_prd_info
-		from 'C:\Users\Parmeshwar Kusumade\OneDrive\Pictures\sql-data-warehouse-project\datasets\source_crm\prd_info.csv'
-		With (
-		Firstrow = 2,
-		fieldterminator = ',',
-		Tablock
-		);
 
-		truncate table Bronze_layer.crm_sales_details;
-		Bulk Insert Bronze_layer.crm_sales_details
-		from 'C:\Users\Parmeshwar Kusumade\OneDrive\Pictures\sql-data-warehouse-project\datasets\source_crm\sales_details.csv'
-		With (
-		Firstrow = 2,
-		fieldterminator = ',',
-		Tablock
-		);
+IF OBJECT_ID('Bronze_layer.crm_cust_info', 'U') IS NOT NULL
+    DROP TABLE Bronze_layer.crm_cust_info;
+GO
 
-		Print '---------------------------------------------';
-		Print 'Loading ERP Tables'
-		Print '---------------------------------------------';
-		truncate table Bronze_layer.erp_loc_a101;
-		Bulk Insert Bronze_layer.erp_cust_az12
-		from 'C:\Users\Parmeshwar Kusumade\OneDrive\Pictures\sql-data-warehouse-project\datasets\source_erp\cust_az12.csv'
-		With (
-		Firstrow = 2,
-		fieldterminator = ',',
-		Tablock
-		);
-		truncate table Bronze_layer.erp_loc_a101;
-		Bulk Insert Bronze_layer.erp_loc_a101
-		from 'C:\Users\Parmeshwar Kusumade\OneDrive\Pictures\sql-data-warehouse-project\datasets\source_erp\LOC_A101.csv'
-		With (
-		Firstrow = 2,
-		fieldterminator = ',',
-		Tablock
-		);
+CREATE TABLE Bronze_layer.crm_cust_info (
+    cst_id              INT,
+    cst_key             NVARCHAR(50),
+    cst_firstname       NVARCHAR(50),
+    cst_lastname        NVARCHAR(50),
+    cst_marital_status  NVARCHAR(50),
+    cst_gndr            NVARCHAR(50),
+    cst_create_date     DATE
+);
+GO
 
-		truncate table Bronze_layer.erp_px_cat_g1v2;
-		Bulk Insert Bronze_layer.erp_px_cat_g1v2
-		from 'C:\Users\Parmeshwar Kusumade\OneDrive\Pictures\sql-data-warehouse-project\datasets\source_erp\PX_CAT_G1V2.csv'
-		With (
-		Firstrow = 2,
-		fieldterminator = ',',
-		Tablock
-		);
-	END TRY
-	begin catch
+IF OBJECT_ID('Bronze_layer.crm_prd_info', 'U') IS NOT NULL
+    DROP TABLE Bronze_layer.crm_prd_info;
+GO
 
-		Print '=============================================';
-		Print 'Error occurred loading Bornze Layer';
-		Print 'Error Message'+ Error_message();
-		Print 'Erro Message'+ Error_number ();
-		Print '=============================================';
-	end catch
-end
+CREATE TABLE Bronze_layer_layer.crm_prd_info (
+    prd_id       INT,
+    prd_key      NVARCHAR(50),
+    prd_nm       NVARCHAR(50),
+    prd_cost     INT,
+    prd_line     NVARCHAR(50),
+    prd_start_dt DATETIME,
+    prd_end_dt   DATETIME
+);
+GO
+
+IF OBJECT_ID('Bronze_layer_layer.crm_sales_details', 'U') IS NOT NULL
+    DROP TABLE Bronze_layer_layer.crm_sales_details;
+GO
+
+CREATE TABLE Bronze_layer_layer.crm_sales_details (
+    sls_ord_num  NVARCHAR(50),
+    sls_prd_key  NVARCHAR(50),
+    sls_cust_id  INT,
+    sls_order_dt INT,
+    sls_ship_dt  INT,
+    sls_due_dt   INT,
+    sls_sales    INT,
+    sls_quantity INT,
+    sls_price    INT
+);
+GO
+
+IF OBJECT_ID('Bronze_layer_layer.erp_loc_a101', 'U') IS NOT NULL
+    DROP TABLE Bronze_layer_layer.erp_loc_a101;
+GO
+
+CREATE TABLE Bronze_layer_layer.erp_loc_a101 (
+    cid    NVARCHAR(50),
+    cntry  NVARCHAR(50)
+);
+GO
+
+IF OBJECT_ID('Bronze_layer_layer.erp_cust_az12', 'U') IS NOT NULL
+    DROP TABLE Bronze_layer.erp_cust_az12;
+GO
+
+CREATE TABLE Bronze_layer.erp_cust_az12 (
+    cid    NVARCHAR(50),
+    bdate  DATE,
+    gen    NVARCHAR(50)
+);
+GO
+
+IF OBJECT_ID('Bronze_layer.erp_px_cat_g1v2', 'U') IS NOT NULL
+    DROP TABLE Bronze_layer.erp_px_cat_g1v2;
+GO
+
+CREATE TABLE Bronze_layer.erp_px_cat_g1v2 (
+    id           NVARCHAR(50),
+    cat          NVARCHAR(50),
+    subcat       NVARCHAR(50),
+    maintenance  NVARCHAR(50)
+);
+GO

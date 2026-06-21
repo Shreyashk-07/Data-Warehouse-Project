@@ -22,4 +22,7 @@ GO
 
 CREATE SCHEMA Gold_layer;
 GO
+-- Used to check schema is present in DB or not
+SELECT schema_name
+FROM information_schema.schemata;
 
